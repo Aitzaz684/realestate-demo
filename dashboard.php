@@ -1,11 +1,11 @@
-<?php  
+<?php
 
-include 'components/connect.php';
+include '../components/connect.php';
 
-if(isset($_COOKIE['user_id'])){
-   $user_id = $_COOKIE['user_id'];
+if(isset($_COOKIE['admin_id'])){
+   $admin_id = $_COOKIE['admin_id'];
 }else{
-   $user_id = '';
+   $admin_id = '';
    header('location:login.php');
 }
 
@@ -17,18 +17,22 @@ if(isset($_COOKIE['user_id'])){
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>dashboard</title>
+   <title>Dashboard</title>
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 
    <!-- custom css file link  -->
-   <link rel="stylesheet" href="css/style.css">
+   <link rel="stylesheet" href="../css/admin_style.css">
 
 </head>
 <body>
    
-<?php include 'components/user_header.php'; ?>
+<!-- header section starts  -->
+<?php include '../components/admin_header.php'; ?>
+<!-- header section ends -->
+
+<!-- dashboard section starts  -->
 
 <section class="dashboard">
 
@@ -36,72 +40,67 @@ if(isset($_COOKIE['user_id'])){
 
    <div class="box-container">
 
-      <div class="box">
+   <div class="box">
       <?php
-         $select_profile = $conn->prepare("SELECT * FROM `users` WHERE id = ? LIMIT 1");
-         $select_profile->execute([$user_id]);
+         $select_profile = $conn->prepare("SELECT * FROM `admins` WHERE id = ? LIMIT 1");
+         $select_profile->execute([$admin_id]);
          $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
       ?>
       <h3>welcome!</h3>
       <p><?= $fetch_profile['name']; ?></p>
       <a href="update.php" class="btn">update profile</a>
-      </div>
+   </div>
 
-      <div class="box">
-         <h3>filter search</h3>
-         <p>search your dream property</p>
-         <a href="search.php" class="btn">search now</a>
-      </div>
-
-      <div class="box">
+   <div class="box">
       <?php
-        $count_properties = $conn->prepare("SELECT * FROM `property` WHERE user_id = ?");
-        $count_properties->execute([$user_id]);
-        $total_properties = $count_properties->rowCount();
+         $select_listings = $conn->prepare("SELECT * FROM `property`");
+         $select_listings->execute();
+         $count_listings = $select_listings->rowCount();
       ?>
-      <h3><?= $total_properties; ?></h3>
-      <p>properties listed</p>
-      <a href="my_listings.php" class="btn">view all listings</a>
-      </div>
+      <h3><?= $count_listings; ?></h3>
+      <p>property posted</p>
+      <a href="listings.php" class="btn">view listings</a>
+   </div>
 
-      <div class="box">
+   <div class="box">
       <?php
-        $count_requests_received = $conn->prepare("SELECT * FROM `requests` WHERE receiver = ?");
-        $count_requests_received->execute([$user_id]);
-        $total_requests_received = $count_requests_received->rowCount();
+         $select_users = $conn->prepare("SELECT * FROM `users`");
+         $select_users->execute();
+         $count_users = $select_users->rowCount();
       ?>
-      <h3><?= $total_requests_received; ?></h3>
-      <p>requests received</p>
-      <a href="requests.php" class="btn">view all requests</a>
-      </div>
+      <h3><?= $count_users; ?></h3>
+      <p>total users</p>
+      <a href="users.php" class="btn">view users</a>
+   </div>
 
-      <div class="box">
+   <div class="box">
       <?php
-        $count_requests_sent = $conn->prepare("SELECT * FROM `requests` WHERE sender = ?");
-        $count_requests_sent->execute([$user_id]);
-        $total_requests_sent = $count_requests_sent->rowCount();
+         $select_admins = $conn->prepare("SELECT * FROM `admins`");
+         $select_admins->execute();
+         $count_admins = $select_admins->rowCount();
       ?>
-      <h3><?= $total_requests_sent; ?></h3>
-      <p>requests sent</p>
-      <a href="saved.php" class="btn">view saved properties</a>
-      </div>
+      <h3><?= $count_admins; ?></h3>
+      <p>total admins</p>
+      <a href="admins.php" class="btn">view admins</a>
+   </div>
 
-      <div class="box">
+   <div class="box">
       <?php
-        $count_saved_properties = $conn->prepare("SELECT * FROM `saved` WHERE user_id = ?");
-        $count_saved_properties->execute([$user_id]);
-        $total_saved_properties = $count_saved_properties->rowCount();
+         $select_messages = $conn->prepare("SELECT * FROM `messages`");
+         $select_messages->execute();
+         $count_messages = $select_messages->rowCount();
       ?>
-      <h3><?= $total_saved_properties; ?></h3>
-      <p>properties saved</p>
-      <a href="saved.php" class="btn">view saved properties</a>
-      </div>
+      <h3><?= $count_messages; ?></h3>
+      <p>new messages</p>
+      <a href="messages.php" class="btn">view messages</a>
+   </div>
 
    </div>
 
 </section>
 
 
+<!-- dashboard section ends -->
 
 
 
@@ -124,12 +123,10 @@ if(isset($_COOKIE['user_id'])){
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
-<?php include 'components/footer.php'; ?>
-
 <!-- custom js file link  -->
-<script src="js/script.js"></script>
+<script src="../js/admin_script.js"></script>
 
-<?php include 'components/message.php'; ?>
+<?php include '../components/message.php'; ?>
 
 </body>
 </html>
